@@ -1,0 +1,25 @@
+{
+  "name": "metamask-bot",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "type": "module",
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "@circle-fin/developer-controlled-wallets": "^8.3.0",
+    "@google/generative-ai": "^0.24.1",
+    "@metamask/delegation-toolkit": "^0.12.0",
+    "@supabase/supabase-js": "^2.50.2",
+    "axios": "^1.10.0",
+    "dotenv": "^16.5.0",
+    "express": "^5.1.0",
+    "node-telegram-bot-api": "^0.66.0",
+    "permissionless": "^0.2.47",
+    "viem": "^2.31.4"
+  }
+}
