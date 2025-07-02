@@ -1,5 +1,5 @@
-import { getBalance, getBalances, getSavingsAndLoans, getYieldRecommendation, performCCTP, performCheckBalanceAAVE, performCheckBalanceCompound, performLendAAVE, performLendCompound, performTransfer, performWithdrawAAVE, performWithdrawCompound } from "./cctp.js";
-import { registerWalletBalanceChecker } from "./util.js";
+import { getBalance, getBalances, getSavingsAndLoans, getYieldRecommendation, performCCTP, performCheckBalanceAAVE, performCheckBalanceCompound, performLendAAVE, performLendCompound, performTransfer, performWithdrawAAVE, performWithdrawCompound } from "./cctp";
+import { registerWalletBalanceChecker } from "./util";
 
 const FUNCTION_CALL_TO_FUNCTION_MAP = {
   "getBalance": getBalance,

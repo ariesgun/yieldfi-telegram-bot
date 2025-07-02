@@ -2,10 +2,24 @@
 
 // Define supported lending projects
 
-import { createPublicClient, createWalletClient, encodeFunctionData, erc20Abi, formatEther, formatUnits, http } from "viem";
-import { AAVE_ETH_BALANCES_ADDRESS, AAVE_POOL_ADDRESS, AAVE_POOL_ETH_ADDRESS, AAVE_USDC_BALANCES_ADDRESS, CHAIN_IDS_TO_CIRCLE_WALLET_BLOCKCHAIN, CHAIN_IDS_TO_MESSAGE_TRANSMITTER, CHAIN_IDS_TO_TOKEN_MESSENGER, CHAIN_IDS_TO_USDC_ADDRESSES, CHAIN_IDS_TO_WETH_ADDRESSES, COMPOUND_ETH_POOL_ADDRESS, COMPOUND_USDC_POOL_ADDRESS, DESTINATION_DOMAINS, SUPPORTED_CHAINS, SupportedChainId } from "./chain.js";
+import { createPublicClient, createWalletClient, encodeFunctionData, erc20Abi, formatEther, formatUnits, Hex, http } from "viem";
+import {
+  AAVE_ETH_BALANCES_ADDRESS,
+  AAVE_POOL_ADDRESS, AAVE_POOL_ETH_ADDRESS,
+  AAVE_USDC_BALANCES_ADDRESS,
+  CHAIN_IDS_TO_CIRCLE_WALLET_BLOCKCHAIN,
+  CHAIN_IDS_TO_MESSAGE_TRANSMITTER,
+  CHAIN_IDS_TO_TOKEN_MESSENGER,
+  CHAIN_IDS_TO_USDC_ADDRESSES,
+  CHAIN_IDS_TO_WETH_ADDRESSES,
+  COMPOUND_ETH_POOL_ADDRESS,
+  COMPOUND_USDC_POOL_ADDRESS,
+  DESTINATION_DOMAINS,
+  SUPPORTED_CHAINS,
+  SupportedChainId
+} from "./chain";
 import { arbitrumSepolia, baseSepolia, lineaSepolia, optimismSepolia, sepolia } from "viem/chains";
-import { getAIVaultRecommendation, getDeFiVaultData } from "./defi-ai-agent.js";
+import { getAIVaultRecommendation, getDeFiVaultData } from "./defi-ai-agent";
 import { generatePrivateKey, privateKeyToAccount } from "viem/accounts";
 import axios from "axios";
 
@@ -175,7 +189,7 @@ export async function performCCTP({
     {
       if (destinationId === lineaSepolia.id) {
 
-        const retrieverAccount = privateKeyToAccount(process.env.MAIN_WALLET_KEY);
+        const retrieverAccount = privateKeyToAccount(process.env.MAIN_WALLET_KEY as Hex);
 
         const walletClient = createWalletClient({
           chain: lineaSepolia,
@@ -188,7 +202,9 @@ export async function performCCTP({
           account: retrieverAccount,
           to: CHAIN_IDS_TO_MESSAGE_TRANSMITTER[destinationId],
           data: mintCallData,
-          value: 0n
+          value: 0n,
+          kzg: undefined,
+          chain: undefined,
         });
 
         console.log("Hash", hash);
@@ -676,12 +692,12 @@ export function encodeCCTPDepositForBurn(destinationAddress, destinationChainId,
       args: [
         amount,
         DESTINATION_DOMAINS[destinationChainId],
-        mintRecipient,
+        mintRecipient as Hex,
         assetAddress,
         "0x0000000000000000000000000000000000000000000000000000000000000000",
         maxFee,
         finalityThreshold,
-        supplyHookData,
+        supplyHookData as Hex,
       ],
     });
 
@@ -1161,7 +1177,7 @@ export async function retrieveAttestation(sourceChainId, transactionHash) {
 export async function getYieldRecommendation({ asset, chain }) {
 
   const vaultData = await getDeFiVaultData();
-  const [recommendation, jsonData] = await getAIVaultRecommendation(vaultData, asset, chain);
+  const result = await getAIVaultRecommendation(vaultData, asset);
 
-  return [recommendation, jsonData]
+  return [result, typeof result === 'object' && result !== null && 'jsonData' in result ? (result as any).jsonData : undefined]
 }

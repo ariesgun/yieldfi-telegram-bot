@@ -5,8 +5,6 @@
 
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import axios from 'axios';
-import { encodeFunctionData, encodePacked } from 'viem';
-import { CHAIN_IDS_TO_MESSAGE_TRANSMITTER, CHAIN_IDS_TO_USDC_ADDRESSES, DESTINATION_DOMAINS } from './chain.js';
 
 // --- Add your initializations for Telegram, Circle, etc. ---
 const geminiApiKey = process.env.GEMINI_API_KEY;
@@ -136,6 +134,6 @@ export async function getAIVaultRecommendation(vaultData, assetSymbol) {
 
   } catch (error) {
     console.error('Error communicating with Gemini API:', error);
-    return 'Sorry, the AI assistant is currently unable to process this request. Please try again later.';
+    throw error;
   }
 }

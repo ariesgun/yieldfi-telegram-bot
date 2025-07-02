@@ -1,5 +1,5 @@
 import { GoogleGenerativeAI } from "@google/generative-ai";
-import { handleFunctionCalls } from "./function-call-executor.js";
+import { handleFunctionCalls } from "./function-call-executor";
 
 // --- Add your initializations for Telegram, Circle, etc. ---
 const geminiApiKey = process.env.GEMINI_API_KEY;
@@ -18,7 +18,7 @@ const WINDOWS_CONTEXT_LENGTH = 6;
 
 export async function _askAI(userId, userWallet, userPrompt, eoaWallet) {
 
-  const functions = [
+  const functions : any[] = [
     {
       name: "getBalance",
       description: "Get the token balance of a wallet address. This function call does not need confirmation from the user.",
@@ -267,7 +267,7 @@ export async function talkToAI(userId, userWallet, userPrompt, circleClient, wal
       });
 
       if (chatHistories[userId].length > WINDOWS_CONTEXT_LENGTH) {
-        chatHistories[userId].splice(0, chatHistories.length - WINDOWS_CONTEXT_LENGTH);
+        chatHistories[userId].splice(0, chatHistories[userId].length - WINDOWS_CONTEXT_LENGTH);
       }
     }
 

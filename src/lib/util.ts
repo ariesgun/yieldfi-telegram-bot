@@ -1,4 +1,4 @@
-import { supabase } from "./supabaseClient.js"
+import { supabase } from "./supabaseClient";
 
 export async function registerWalletBalanceChecker({ username, chatId, eoa_wallet_address, threshold }) {
 
@@ -59,7 +59,7 @@ export async function getWalletInfo(userId) {
       .eq("telegram_user_id", userId);
 
     if (error !== null) {
-      throw new Error(error)
+      throw new Error(error?.message)
     }
 
     if (!data || data.length == 0) {
@@ -82,7 +82,7 @@ export async function getWalletInfo(userId) {
       .eq("telegram_user_id", userId);
 
     if (error !== null) {
-      throw new Error(error)
+      throw new Error(error?.message)
     }
 
     if (!data || data.length == 0) {

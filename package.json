@@ -1,11 +1,7 @@
 {
-  "name": "metamask-bot",
+  "name": "yieldfi-bot",
   "version": "1.0.0",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "type": "module",
+  "main": "src/index.ts",
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -13,13 +9,37 @@
   "dependencies": {
     "@circle-fin/developer-controlled-wallets": "^8.3.0",
     "@google/generative-ai": "^0.24.1",
-    "@metamask/delegation-toolkit": "^0.12.0",
     "@supabase/supabase-js": "^2.50.2",
+    "@vercel/node": "^3.0.28",
     "axios": "^1.10.0",
+    "crypto-js": "^4.2.0",
     "dotenv": "^16.5.0",
+    "dotenv-cli": "^8.0.0",
     "express": "^5.1.0",
+    "moment": "^2.30.1",
     "node-telegram-bot-api": "^0.66.0",
     "permissionless": "^0.2.47",
-    "viem": "^2.31.4"
+    "telegraf": "^4.16.3",
+    "telegraf-session-mongodb": "^2.0.2",
+    "viem": "^2.31.4",
+    "web3": "^4.11.1"
+  },
+  "devDependencies": {
+    "@types/debug": "^4.1.12",
+    "@types/mongodb": "^3.6.8",
+    "@types/node": "^20.14.13",
+    "@vercel/ncc": "^0.38.1",
+    "debug": "^4.3.4",
+    "nodemon": "^3.1.0",
+    "prettier": "^3.2.5",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.4.5"
+  },
+  "scripts": {
+    "dev": "DEBUG=bot* dotenv -- nodemon -e ts -x ts-node src/index.ts",
+    "devWindows": "@powershell -Command $env:DEBUG='bot*';dotenv -- -- nodemon -e ts -x ts-node src/index.ts",
+    "build": "ncc build src/index.ts -o public -m",
+    "prettier": "prettier --write 'src/**/*.ts'",
+    "lint": "tsc --noemit"
   }
 }
