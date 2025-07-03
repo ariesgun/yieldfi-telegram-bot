@@ -91,7 +91,8 @@ const onboard = () => async (ctx: Context) => {
     }
   }
 
-  if (!isEOAWalletLinked(userId)) {
+  walletInfo = (await getWalletInfo(userId)).walletInfo;
+  if (! await isEOAWalletLinked(userId)) {
     // Ask the user to link the saving account to the metamask account
     bot.sendMessage(chatId, `✅ Your saving account successfully created!\n\nYour saving account wallet: \`${walletInfo.circleWallet}\`.\nBlockchains: Base(Sepolia), Optimism(Sepolia), and Arbitrum(Sepolia)\n
   To link to your Metamask-card account and move your assets to your saving account, please proceed to ${process.env.BACKEND_URL}.
