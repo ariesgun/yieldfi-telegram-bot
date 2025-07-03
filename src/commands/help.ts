@@ -28,7 +28,7 @@ const help = () => async (ctx: Context) => {
 
     await bot.sendMessage(chatId, response, { parse_mode: 'Markdown', reply_markup });
 
-    if (!isCircleWalletCreated(userId) || !isEOAWalletLinked(userId)) {
+    if (! await isCircleWalletCreated(userId) || ! await isEOAWalletLinked(userId)) {
       await bot.sendMessage(chatId, `It looks like you have not setup your saving account.\n
   To get started, please run the /onboard command to create your saving wallet and begin using the bot.`)
     }

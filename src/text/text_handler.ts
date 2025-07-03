@@ -13,7 +13,7 @@ const text_handler = () => async (ctx: Context) => {
 
   if (msg && msg.startsWith('/')) return;
 
-  if (!isCircleWalletCreated(userId) || !isEOAWalletLinked(userId)) {
+  if (! await isCircleWalletCreated(userId) || ! await isEOAWalletLinked(userId)) {
     bot.sendMessage(chatId, `👋 Welcome!\n
 I'm here to help you manage your wallets, check balances, and interact with DeFi protocols easily.\n
 To get started, please run the /onboard command to create your wallet and begin using the bot.`)

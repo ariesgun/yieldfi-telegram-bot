@@ -1,9 +1,7 @@
 import { Context } from "telegraf";
 import createDebug from "debug";
 
-import { author, name, version } from "../../package.json";
-import { getWalletInfo, isCircleWalletCreated, isEOAWalletLinked } from "../lib/util";
-import { talkToAI } from "../lib/chat-ai-agent";
+import { getWalletInfo, isEOAWalletLinked } from "../lib/util";
 import { initiateDeveloperControlledWalletsClient } from "@circle-fin/developer-controlled-wallets";
 import { supabase } from "../lib/supabaseClient";
 import { CHAIN_CIRCLE_TO_IDS } from "../lib/chain";

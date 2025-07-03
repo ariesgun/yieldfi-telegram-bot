@@ -1,10 +1,5 @@
 import { Context } from "telegraf";
 import createDebug from "debug";
-
-import { author, name, version } from "../../package.json";
-import { getWalletInfo, isCircleWalletCreated, isEOAWalletLinked } from "../lib/util";
-import { talkToAI } from "../lib/chat-ai-agent";
-import { initiateDeveloperControlledWalletsClient } from "@circle-fin/developer-controlled-wallets";
 import { getAIVaultRecommendation, getDeFiVaultData } from "../lib/defi-ai-agent";
 
 const debug = createDebug("bot:vault_command");
