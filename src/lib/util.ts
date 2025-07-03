@@ -63,7 +63,10 @@ export async function getWalletInfo(userId) {
     }
 
     if (!data || data.length == 0) {
-      return null
+      return {
+        walletInfo: null,
+        walletId: null,
+      }
     }
 
     walletsInfo[data[0].telegram_user_id] = {
@@ -86,7 +89,10 @@ export async function getWalletInfo(userId) {
     }
 
     if (!data || data.length == 0) {
-      return null
+      return {
+        walletInfo: walletsInfo[userId],
+        walletId: null,
+      }
     }
 
     walletIDsByChain[userId] = {}

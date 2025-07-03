@@ -15,7 +15,7 @@ const onboard = () => async (ctx: Context) => {
   const userName = ctx.from.username;
 
   let { walletInfo } = await getWalletInfo(userId);
-  if (walletInfo == null) {
+  if (walletInfo === null) {
     // Create the wallet
     const circleApiKey = process.env.CIRCLE_API_KEY;
     const circleEntitySecret = process.env.CIRCLE_ENTITY_SECRET;
