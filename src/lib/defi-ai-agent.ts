@@ -95,7 +95,7 @@ export async function getAIVaultRecommendation(userPrompt, vaultData, assetSymbo
 
     ** Your Response Format:**
     - Ensure all responses are clear, concise, and formatted for Telegram specific to user's requests.
-    - If multiple vaults have the same chain, token, and project name, show only the one with the highest TVL and/or APY.
+    - If multiple vaults have the same chain, token name, and project name, show only the one with the highest TVL and/or APY.
     - Always Show the project name, APY, TVL, and the underlying token name related to the user's request.
     - Use '-' instead of '*' for list.
     - This is only applicable when the users ask for recommendation, please provide the answer in a friendly Markdown formatted message:

@@ -1134,21 +1134,45 @@ export async function getBalances({ address }) {
 export async function getSavingsAndLoans({ address }) {
   let balances = {}
 
-  const ASSETS = {
-    'ETH': AAVE_ETH_BALANCES_ADDRESS,
-    'USDC': AAVE_USDC_BALANCES_ADDRESS,
+  const POOLS = [
+    {
+      poolName: 'AAVE',
+      token: 'ETH',
+      addresses: AAVE_ETH_BALANCES_ADDRESS
+    },
+    {
+      poolName: 'AAVE',
+      token: 'USDC',
+      addresses: AAVE_USDC_BALANCES_ADDRESS
+    },
+    {
+      poolName: 'Compound',
+      token: 'ETH',
+      addresses: COMPOUND_ETH_POOL_ADDRESS
+    },
+    {
+      poolName: 'Compound',
+      token: 'USDC',
+      addresses: COMPOUND_USDC_POOL_ADDRESS
+    }
+  ]
+
+  const SUPPORTED_CHAINS = {
+    "base sepolia": baseSepolia,
+    "optimism sepolia": optimismSepolia,
+    "arbitrum sepolia": arbitrumSepolia,
   }
 
-  for (const [name, chain] of Object.entries(CHAIN_IDS_TO_CHAINS)) {
+  for (const [name, chain] of Object.entries(SUPPORTED_CHAINS)) {
     balances[chain.name] = []
-    for (const [assetName, assetPool] of Object.entries(ASSETS)) {
-      if (chain.id in assetPool) {
-        const balance = await getERC20Balance(chain, address, assetPool[chain.id]);
+    for (const poolInfo of POOLS) {
+      if (chain.id in poolInfo.addresses) {
+        const balance = await getERC20Balance(chain, address, poolInfo.addresses[chain.id]);
         balances[chain.name].push({
           chainName: chain.name,
-          protocolName: "AAVE",
+          protocolName: poolInfo.poolName,
           type: 'Savings',
-          asset: assetName,
+          asset: poolInfo.token,
           balance: balance
         });
       }

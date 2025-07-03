@@ -214,6 +214,7 @@ export async function _askAI(userId, userWallet, userPrompt, eoaWallet) {
     - If the users do not have any position on a chain, don't show it.
     - If the balance of a token is 0, don't show it.
     - Always highlight chain name in BOLD (use '*' instead of '**')
+    - Always use complete chain name, for example Optimism instead of OP, Arbitrum instead of ARB.
 
     Example requests you can handle:
     - "What is my USDC balance on Optimism?"
