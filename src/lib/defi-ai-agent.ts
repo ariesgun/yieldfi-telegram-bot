@@ -42,7 +42,7 @@ export async function getDeFiVaultData() {
       supportedAssets.includes(pool.symbol.toLowerCase()) &&
       supportedProjects.includes(pool.project.toLowerCase()) &&
       pool.apy > 0.1 && // Filter out very low or erroneous APY pools
-      pool.tvlUsd > 100000 && // Filter out pools with very low TVL
+      pool.tvlUsd > 500000 && // Filter out pools with very low TVL
       pool.ilRisk === "no"
     );
 
@@ -53,7 +53,7 @@ export async function getDeFiVaultData() {
     for (const pool of filteredPools) {
       console.log(`Project: ${pool.project}, Pool: ${pool.chain}, APY: ${pool.apy.toFixed(2)}%, TVL: $${pool.tvlUsd.toLocaleString()}`);
     }
-    console.log(`Found ${filteredPools.length} relevant pools. Taking top 10.`);
+    console.log(`Found ${filteredPools.length} relevant pools.`);
     // return filteredPools.slice(0, 10);
     return filteredPools.slice(0, filteredPools.length);;
 
@@ -74,49 +74,49 @@ export async function getDeFiVaultData() {
  * @param {string} chainName - The chain the user is interested in.
  * @returns {Promise<string>} A promise that resolves to the AI's formatted recommendation.
  */
-export async function getAIVaultRecommendation(vaultData, assetSymbol) {
-  const prompt = `
-    You are a helpful and cautious DeFi Analyst Assistant for a Telegram bot.Your task is to analyze a list of DeFi lending vaults and recommend the best option for a user.
+export async function getAIVaultRecommendation(userPrompt, vaultData, assetSymbol) {
+  const systemPrompt = `
+    You are a helpful and cautious DeFi Analyst Assistant for a Telegram bot.
 
-    ** User Request:** The user wants to find the best vault to lend their ${assetSymbol}.
+    ** Capabilities: **
+    - Answer users' questions regarding available saving vaults and their rates.
+    - Analyze a list of DeFi lending vaults
+    - Recommend to user the best option for users when asked.
 
-    ** Analysis Data:** Here is a JSON array of available vaults, sorted by Total Value Locked(TVL).Analyze this data based on APY(Annual Percentage Yield) and TVL.
+    ** Analysis Guidelines for recommendation:**
+    Here is a JSON array of available vaults, sorted by Total Value Locked(TVL). Analyze this data based on APY(Annual Percentage Yield) and TVL.
     - ** APY:** Higher is better for returns.Prefer pools with higher base APY than rewards APY.
     - ** TVL:** Higher is generally an indicator of stability and trust.A good recommendation often balances high APY with substantial TVL.Do not recommend pools with very low TVL unless their APY is exceptional and you highlight the risk.
+    - If multiple vaults have the same chain and pool name, choose the one with the highest TVL and/or APY.
+    - Only include vaults relevant to the user’s asset and chain.
 
     ** Data:**
         ${JSON.stringify(vaultData)}
 
     ** Your Response Format:**
-        Please provide your answer in two parts:
-    1. A Telegram - friendly Markdown formatted message: 
-        Provide your response in Telegram - friendly Markdown. Use '-' instead of '*' for list.
+    - Ensure all responses are clear, concise, and formatted for Telegram specific to user's requests.
+    - If multiple vaults have the same chain, token, and project name, show only the one with the highest TVL and/or APY.
+    - Always Show the project name, APY, TVL, and the underlying token name related to the user's request.
+    - Use '-' instead of '*' for list.
+    - This is only applicable when the users ask for recommendation, please provide the answer in a friendly Markdown formatted message:
         1. * Top Recommendation:* Start with "🏆 *Top Recommendation*". State the pool name, and chain clearly.
         2. * Key Metrics:* List the APY, TVL, and any other relevant metric from the data.
         3. * Reasoning:* In a section called "🤔 **Why this choice?**", explain in 2 - 3 sentences why you chose this vault, referencing the balance between APY and TVL.
-        4. * Alternatives:* List 5 other strong choices under "✅ **Other Strong Options**".Just state the pool and chain name, their APY and TVL, without detailed explanations.
+        4. * Alternatives:* List 5 other strong choices under "✅ **Other Strong Options**".Just state the pool and chain name, the token address, their APY and TVL, without detailed explanations.
         5. * Disclaimer:* * ALWAYS * end with the following mandatory disclaimer: "⚠️ *Disclaimer:* This is not financial advice. APYs are variable and subject to change. Always do your own research (DYOR) before investing in any DeFi protocol."
-    2. A JSON object with the structure below. Sort the results based on recommendations.
-    \`\`\`json
-        {
-            "recommendations": [
-                {
-                    "project": "Project Name",
-                    "chain": "Chain Name",
-                    "apy": "APY Value",
-                    "tvl": "TVL Value",
-                },
-                // ... up to 6 other options
-            ]
-        }
-        \`\`\`
 
     Begin your response now.
   `;
 
   try {
-    console.log('Sending data to Gemini for analysis...');
-    const result = await geminiModel.generateContent(prompt);
+    let prompt = { role: 'user', parts: [{ text: userPrompt }] }
+    
+    const result = await geminiModel.generateContent({
+      contents: [
+        { role: "model", parts: [{ text: systemPrompt }]},
+        prompt
+      ]
+    });
     const response = await result.response;
     console.log('Received response from Gemini AI.');
     console.log('AI Response:', response.text());

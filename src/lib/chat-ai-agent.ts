@@ -18,7 +18,7 @@ const WINDOWS_CONTEXT_LENGTH = 6;
 
 export async function _askAI(userId, userWallet, userPrompt, eoaWallet) {
 
-  const functions : any[] = [
+  const functions: any[] = [
     {
       name: "getBalance",
       description: "Get the token balance of a wallet address. This function call does not need confirmation from the user.",
@@ -75,8 +75,8 @@ export async function _askAI(userId, userWallet, userPrompt, eoaWallet) {
         type: "object",
         properties: {
           walletAddress: { type: "string", description: "Source of fund address" },
-          sourceNetwork: { type: "string", description: "Source network" },
-          destinationNetwork: { type: "string", description: "Destination Network" },
+          sourceNetwork: { type: "string", description: "Source network. Do not use abbreviation." },
+          destinationNetwork: { type: "string", description: "Destination Network. Do not use abbreviation." },
           destinationAddress: { type: "string", description: "Recipient Address" },
           amount: { type: "string", description: "Amount of USDC to transfer" }
         },
@@ -139,9 +139,10 @@ export async function _askAI(userId, userWallet, userPrompt, eoaWallet) {
       parameters: {
         type: "object",
         properties: {
+          prompt: { type: "string", description: "prompt to be called" },
           asset: { type: "string", description: "Optional asset name" },
-          chain: { type: "string", description: "Optional chain name" }
         },
+        required: ['prompt']
       }
     },
     {
@@ -175,7 +176,8 @@ export async function _askAI(userId, userWallet, userPrompt, eoaWallet) {
 
     Instructions:
     - Always clarify which blockchain and token the user is referring to if not specified.
-    - Ask for the user's wallet address or other required details when necessary.    
+    - Ask for the user's wallet address or other required details when necessary.
+    - When user asks for their metamask card or EOA balance and they do not specify the asset and chain name, assume it is USDC on Linea sepolia network.
     - When showing user's balances, always display 5 decimal places.
     - If a request is ambiguous, ask follow-up questions to clarify.
     - When appropriate, suggest the next logical action for the user.
@@ -185,6 +187,7 @@ export async function _askAI(userId, userWallet, userPrompt, eoaWallet) {
     - Only after the user confirms, respond with the list of function calls and their required parameters to be executed.
     - If the user cancels or does not confirm the operation, then starts over again. Re-confirm for the new requests.
     - Ensure all responses are clear, concise, and formatted for Telegram.
+    - If the user wants to top up their metamask card account, please analyze their balances and make suggestions to the user.
     - Upon receiving the result of function calls, inspect the result and inform the user with summary and the result.
     - Your output format should be a raw json object with the format shown below. reply_markup is filled in when you are asking for user's confirmation, otherwise empty {}.
   
@@ -224,15 +227,12 @@ export async function _askAI(userId, userWallet, userPrompt, eoaWallet) {
       chatHistories[userId] = [];
     }
 
-    let contents = chatHistories[userId]
+    let contents: any[] = chatHistories[userId]
     console.log("User prompt", userPrompt)
     contents.push(userPrompt)
 
     const result = await geminiModel.generateContent({
-      contents: [
-        { role: 'model', parts: [{ text: systemPrompt }] },
-        contents
-      ],
+      contents: [{ role: 'model', parts: [{ text: systemPrompt }] }].concat(contents),
       tools: [
         { functionDeclarations: functions }
       ]

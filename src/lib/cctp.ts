@@ -1099,7 +1099,14 @@ export async function getBalance({ address, chain, assetName }) {
 export async function getBalances({ address }) {
   let balances = {}
 
-  for (const [name, chain] of Object.entries(CHAIN_IDS_TO_CHAINS)) {
+  const SUPPORTED_CHAINS = {
+    "base sepolia": baseSepolia,
+    "optimism sepolia": optimismSepolia,
+    "arbitrum sepolia": arbitrumSepolia,
+    "linea sepolia": lineaSepolia
+  }
+
+  for (const [name, chain] of Object.entries(SUPPORTED_CHAINS)) {
     balances[chain.name] = []
     for (const assetName of SUPPORTED_ASSETS) {
       if (assetName === "ETH") {
@@ -1174,10 +1181,10 @@ export async function retrieveAttestation(sourceChainId, transactionHash) {
   }
 };
 
-export async function getYieldRecommendation({ asset, chain }) {
+export async function getYieldRecommendation({ prompt, asset }) {
 
   const vaultData = await getDeFiVaultData();
-  const result = await getAIVaultRecommendation(vaultData, asset);
+  const result = await getAIVaultRecommendation(prompt, vaultData, asset);
 
   return [result, typeof result === 'object' && result !== null && 'jsonData' in result ? (result as any).jsonData : undefined]
 }

@@ -24,7 +24,7 @@ const vaults = () => async (ctx: Context) => {
   }
 
   // 2. Get AI Recommendation
-  const result = await getAIVaultRecommendation(vaultData, 'USDC');
+  const result = await getAIVaultRecommendation("The user wants to find the best vault to lend their token", vaultData, 'USDC');
   const recommendation: string | any = result[0];
   const jsonData: { recommendations: any[] } | any = result[1];
   let inlineKeyboard = [];

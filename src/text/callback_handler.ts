@@ -9,10 +9,10 @@ const callback_handler = () => async (ctx: Context) => {
   console.log("Callback query", ctx);
 
   const callback_query = ctx.update["callback_query"];
-  console.log(callback_query.message);
+  console.log(callback_query);
 
   const data = callback_query.data;
-  const bot = callback_query.telegram
+  const bot = ctx.telegram
 
   // Handle button press
   const msg = `You pressed: ${data}`
@@ -34,9 +34,9 @@ const callback_handler = () => async (ctx: Context) => {
     const { walletInfo, walletId } = await getWalletInfo(userId);
     const [response, reply_markup] = await talkToAI(walletInfo.userId, walletInfo.circleWallet, msg, circleClient, walletId, walletInfo.eoaWallet, walletInfo.userName, chatId)
 
-    bot.sendMessage(chatId, response, { parse_mode: 'Markdown', reply_markup });
+    await bot.sendMessage(chatId, response, { parse_mode: 'Markdown', reply_markup });
   } catch (error) {
-    bot.sendMessage(chatId, `❌ Sorry, something went wrong. Please try again. ${error.message}`);
+    await bot.sendMessage(chatId, `❌ Sorry, something went wrong. Please try again. ${error.message}`);
   }
 };
 
